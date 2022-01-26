@@ -15,8 +15,13 @@ def gen_frames():  # generate frame by frame from camera
 
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        lower_color = np.array([100,100,70], dtype=np.uint8)
-        upper_color = np.array([220,255,255], dtype=np.uint8)
+        # Red
+        #lower_color = np.array([100,100,70], dtype=np.uint8)
+        #upper_color = np.array([220,255,255], dtype=np.uint8)
+
+        # Blue
+        lower_color = np.array([100,100,100], dtype=np.uint8)
+        upper_color = np.array([110,130,150], dtype=np.uint8)
 
         # Threshold the HSV image to get only blue colors
         mask = cv2.inRange(hsv, lower_color, upper_color)
