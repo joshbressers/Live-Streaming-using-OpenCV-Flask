@@ -16,6 +16,10 @@ def gen_frames():  # generate frame by frame from camera
         # Capture frame-by-frame
         success, frame = camera.read()  # read the camera frame
 
+        # If something goes wrong with the camera, exit the function
+        if not success:
+            break
+
         # We convert the image into HSV format. HSV is used for image
         # tracking later
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -88,18 +92,15 @@ def gen_frames():  # generate frame by frame from camera
         # We draw the rectangle onto the screen here
         cv2.rectangle(frame,(x,y),(x+w,y+h),[255,0,0],2)
 
-        if not success:
-            break
-        else:
-            # This step encodes the data into a jpeg image
-            ret, buffer = cv2.imencode('.jpg', frame)
+        # This step encodes the data into a jpeg image
+        ret, buffer = cv2.imencode('.jpg', frame)
 
-            # We have to return bytes to the user
-            frame = buffer.tobytes()
+        # We have to return bytes to the user
+        frame = buffer.tobytes()
 
-            # Return the image to the browser
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+        # Return the image to the browser
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
 
 
 @app.route('/video_feed')
