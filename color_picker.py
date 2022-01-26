@@ -13,6 +13,7 @@ def gen_frames():  # generate frame by frame from camera
     while True:
         # Capture frame-by-frame
         success, frame = camera.read()  # read the camera frame
+        frame = cv2.flip(frame, 1)
 
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
