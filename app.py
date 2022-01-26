@@ -12,6 +12,9 @@ def c_picker():  # generate frame by frame from camera
     while True:
         # Capture frame-by-frame
         success, frame = camera.read()  # read the camera frame
+        if not success:
+            break
+
         frame = cv2.flip(frame, 1)
 
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -52,13 +55,10 @@ def c_picker():  # generate frame by frame from camera
         print(" High:", high, end='')
         print(" Average: [%d, %d, %d]" % (int(mean(h)), int(mean(s)), int(mean(v))))
 
-        if not success:
-            break
-        else:
-            ret, buffer = cv2.imencode('.jpg', frame)
-            frame = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+        ret, buffer = cv2.imencode('.jpg', frame)
+        frame = buffer.tobytes()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
 
 # This function gets called by the /video_feed route below
 def gen_frames():  # generate frame by frame from camera
