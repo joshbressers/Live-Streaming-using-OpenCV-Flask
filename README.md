@@ -1,4 +1,4 @@
-# Live-Streaming-using-OpenCV-Flask
+# opencv-object-detection
 A Flask Web-App to stream live from local webcam and identify a colored
 object in the frame.
 
