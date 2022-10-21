@@ -89,68 +89,26 @@ def gen_frames():  # generate frame by frame from camera
         if not success:
             break
 
-        # We convert the image into HSV format. HSV is used for image
-        # tracking later
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-
-        # To detect a color we need to set an upper and lower bound on the
-        # color. The array of numbers is HSV format which is not a standard
-        # in any way.
-        # You can use the color-picker.py script to help figure
-        # these numbers out, it's much easier than trying to figure this
-        # out by hand
-
-        # We now take the lower and upper bound colors and look for
-        # anything that falls inside of this range.
         mask = cv2.inRange(hsv, lower_color, upper_color)
+        contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        # Bitwise-AND mask and original image
-        res = cv2.bitwise_and(frame,frame, mask= mask)
+        #bilateral_filtered_image = cv2.bilateralFilter(frame, 5, 175, 175)
+        #edge_detected_image = cv2.Canny(bilateral_filtered_image, 75, 200)
+        #contours, hierarchy = cv2.findContours(edge_detected_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        # Convert the image to grayscale
-        imgray = cv2.cvtColor(res,cv2.COLOR_BGR2GRAY)
+        #imgray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        #ret, thresh = cv2.threshold(imgray, 127, 255, 0)
+        #contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        # This turns the image into a black and white. Lighter pixels are
-        # turned white, darker pixels turn black
-        ret,thresh = cv2.threshold(imgray,127,255,0)
+        contour_list = []
+        for contour in contours:
+            approx = cv2.approxPolyDP(contour,0.01*cv2.arcLength(contour,True),True)
+            area = cv2.contourArea(contour)
+            if ((len(approx) > 8) & (len(approx) < 23) & (area > 30) ):
+                contour_list.append(contour)
 
-        # This step looks for shapes in the black and white image
-        contours, hierarchy = cv2.findContours(imgray,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-
-        # This variable is going to hold the largest rectangle we find. We
-        # can do multiple object tracking, but it's easier for us to track
-        # just the largest rectangle
-        rectangle = {
-            "area": 0,
-            "x": 0,
-            "y": 0,
-            "w": 0,
-            "h": 0
-        }
-
-        # We will loop over all the rectangles found
-        for cnt in contours:
-
-            # Get the rectangle dimensions
-            x,y,w,h = cv2.boundingRect(cnt)
-
-            # If this rectangle is larger than the currently largest
-            # recrangle, store it
-            if w * h > rectangle["area"]:
-                rectangle["area"] = w * h
-                rectangle["x"] = x
-                rectangle["y"] = y
-                rectangle["w"] = w
-                rectangle["h"] = h
-
-        # Only frame the biggest rectangle
-        x = rectangle["x"]
-        y = rectangle["y"]
-        w = rectangle["w"]
-        h = rectangle["h"]
-
-        # We draw the rectangle onto the screen here
-        cv2.rectangle(frame,(x,y),(x+w,y+h),[255,0,0],2)
+        frame = cv2.drawContours(frame, contour_list, -1, (0,255,0), 3)
 
         # This step encodes the data into a jpeg image
         ret, buffer = cv2.imencode('.jpg', frame)
