@@ -10,7 +10,7 @@ class AprilTagHandler:
 
     def check(self):
         gray = self.cv.get_gray()
-        options = apriltag.DetectorOptions(families="tag36h11")
+        options = apriltag.DetectorOptions(families="tag16h5")
         detector = apriltag.Detector(options)
         self.results = detector.detect(gray)
 
