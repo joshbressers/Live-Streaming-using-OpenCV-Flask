@@ -47,8 +47,12 @@ def gen_frames(app):  # generate frame by frame from camera
 
         # Capture frame-by-frame
         app.open_cv.update()
+        if app.apriltag.check():
+            app.apriltag.add_rectangle()
 
-        frame = app.cv_color.get_rectangle()
+        app.cv_color.add_rectangle()
+
+        frame = app.open_cv.get_frame()
 
         # This step encodes the data into a jpeg image
         ret, buffer = cv2.imencode('.jpg', frame)

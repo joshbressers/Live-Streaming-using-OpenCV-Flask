@@ -95,7 +95,7 @@ class OpenCVColor:
 
         return contours
 
-    def get_rectangle(self):
+    def add_rectangle(self):
 
         contours = self.get_contours()
         # This variable is going to hold the largest rectangle we find. We
@@ -132,4 +132,4 @@ class OpenCVColor:
 
         # We draw the rectangle onto the screen here
         new_frame = cv2.rectangle(self.cv.get_frame(),(x,y),(x+w,y+h),[255,0,0],2)
-        return new_frame
+        self.cv.frame = new_frame

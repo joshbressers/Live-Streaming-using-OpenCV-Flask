@@ -26,6 +26,10 @@ class OpenCVHandler:
         self.hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
         return self.hsv
 
+    def get_gray(self):
+        self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+        return self.gray
+
     def get_height(self):
         if self.frame is None:
             self.update()
