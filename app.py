@@ -16,19 +16,13 @@ def c_picker(app):  # generate frame by frame from camera
         # Capture frame-by-frame
         app.open_cv.update()
 
-        hsv = app.open_cv.get_hsv()
-
         height = app.open_cv.get_height()
         width = app.open_cv.get_width()
-
-        # Let's draw a rectangle that's 100x100 in the middle of the screen
-        w = 100
-        h = 100
 
         x = int(width/2) - 50
         y = int(height/2) - 50
 
-        app.open_cv.add_rectangle((x,y), (x+w, y+h), [255,0,0])
+        app.open_cv.add_rectangle((x,y), (x+100, y+100), [255,0,0])
         frame = app.open_cv.get_jpg_bytes(flipped=True)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
