@@ -1,7 +1,4 @@
 from flask import Flask, render_template, Response, redirect
-import cv2
-import numpy as np
-from statistics import mean
 
 from obj_detc import OpenCVHandler
 from obj_detc import OpenCVColor
@@ -18,7 +15,6 @@ def c_picker(app):  # generate frame by frame from camera
     while True:
         # Capture frame-by-frame
         app.open_cv.update()
-        frame = app.open_cv.get_frame(flipped=True)  # read the camera frame
 
         hsv = app.open_cv.get_hsv()
 
@@ -32,10 +28,8 @@ def c_picker(app):  # generate frame by frame from camera
         x = int(width/2) - 50
         y = int(height/2) - 50
 
-        cv2.rectangle(frame,(x,y),(x+w,y+h),[255,0,0],2)
-
-        ret, buffer = cv2.imencode('.jpg', frame)
-        frame = buffer.tobytes()
+        app.open_cv.add_rectangle((x,y), (x+w, y+h), [255,0,0])
+        frame = app.open_cv.get_jpg_bytes(flipped=True)
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
 
@@ -52,14 +46,7 @@ def gen_frames(app):  # generate frame by frame from camera
 
         app.cv_color.add_rectangle()
 
-        frame = app.open_cv.get_frame()
-
-        # This step encodes the data into a jpeg image
-        ret, buffer = cv2.imencode('.jpg', frame)
-
-        # We have to return bytes to the user
-        frame = buffer.tobytes()
-
+        frame = app.open_cv.get_jpg_bytes()
         # Return the image to the browser
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result

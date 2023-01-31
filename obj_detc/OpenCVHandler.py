@@ -39,3 +39,12 @@ class OpenCVHandler:
         if self.frame is None:
             self.update()
         return len(self.frame[0])
+
+    def add_rectangle(self, start, end, color, thickness=2):
+        self.frame = cv2.rectangle(self.frame, start, end, color, thickness)
+
+    def get_jpg_bytes(self, flipped=False):
+        frame = self.get_frame(flipped)
+        ret, buffer = cv2.imencode('.jpg', frame)
+        jpg = buffer.tobytes()
+        return jpg
