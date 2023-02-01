@@ -1,4 +1,8 @@
+#!/usr/bin/env python
+
+from threading import Thread
 from flask import Flask, render_template, Response, redirect
+import time
 
 from obj_detc import OpenCVHandler
 from obj_detc import OpenCVColor
@@ -76,5 +80,9 @@ def do_set():
 
 if __name__ == '__main__':
 
-    #app.run(threaded=False)
-    app.run()
+    thread = Thread(target=app.run)
+    thread.start()
+
+    while True:
+        # Do things in here
+        time.sleep(1)
