@@ -8,6 +8,7 @@ class OpenCVHandler:
     def __init__(self):
         self.frame = None
         self.hsv = None
+        self.gray = None
         self.camera = cv2.VideoCapture(0)
 
     def update(self):

@@ -14,10 +14,6 @@ old_v = 0
 
 app = Flask(__name__)
 
-app.open_cv = OpenCVHandler()
-app.cv_color = OpenCVColor(app.open_cv)
-app.apriltag = AprilTagHandler(app.open_cv)
-
 def gen_hsv(app):  # generate frame by frame from camera
 
     global old_h
@@ -58,6 +54,7 @@ def c_picker(app):  # generate frame by frame from camera
 
     while True:
         # Capture frame-by-frame
+        app.open_cv.update()
 
         height = app.open_cv.get_height()
         width = app.open_cv.get_width()
@@ -75,8 +72,9 @@ def gen_frames(app):  # generate frame by frame from camera
 
     # We want to loop this forever
     while True:
-
         # Capture frame-by-frame
+        app.open_cv.update()
+
         if app.apriltag.check():
             app.apriltag.add_rectangle()
 
@@ -102,7 +100,6 @@ def color_picker():
 def show_hsv():
     #Video streaming route. Put this in the src attribute of an img tag
     return Response(gen_hsv(app), mimetype='multipart/x-mixed-replace; boundary=frame')
-
 
 @app.route('/')
 def index():
@@ -142,6 +139,6 @@ if __name__ == '__main__':
 
     while True:
         # We control when opencv updates the image now
-        cv_handler.update()
+        #cv_handler.update()
 
-        time.sleep(0.01)
+        time.sleep(1)
