@@ -14,6 +14,8 @@ class OpenCVHandler:
         success, frame = self.camera.read()
         if success:
             self.frame = frame
+            self.hsv = None
+            self.gray = None
 
     def flip(self):
         self.frame = cv2.flip(self.frame, 1)
@@ -26,21 +28,19 @@ class OpenCVHandler:
             return self.frame
 
     def get_hsv(self):
-        self.hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
+        if self.hsv is None:
+            self.hsv = cv2.cvtColor(self.frame, cv2.COLOR_BGR2HSV)
         return self.hsv
 
     def get_gray(self):
-        self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+        if self.gray is None:
+            self.gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
         return self.gray
 
     def get_height(self):
-        if self.frame is None:
-            self.update()
         return len(self.frame)
 
     def get_width(self):
-        if self.frame is None:
-            self.update()
         return len(self.frame[0])
 
     def add_rectangle(self, start, end, color, thickness=2):

@@ -1,4 +1,8 @@
+#!/usr/bin/env python
+
+from threading import Thread
 from flask import Flask, render_template, Response, redirect
+import time
 
 from obj_detc import OpenCVHandler
 from obj_detc import OpenCVColor
@@ -54,7 +58,6 @@ def c_picker(app):  # generate frame by frame from camera
 
     while True:
         # Capture frame-by-frame
-        app.open_cv.update()
 
         height = app.open_cv.get_height()
         width = app.open_cv.get_width()
@@ -74,7 +77,6 @@ def gen_frames(app):  # generate frame by frame from camera
     while True:
 
         # Capture frame-by-frame
-        app.open_cv.update()
         if app.apriltag.check():
             app.apriltag.add_rectangle()
 
@@ -126,5 +128,20 @@ def do_set():
 
 if __name__ == '__main__':
 
-    #app.run(threaded=False)
-    app.run()
+    cv_handler = OpenCVHandler()
+    cv_color = OpenCVColor(cv_handler)
+    apriltag = AprilTagHandler(cv_handler)
+
+    app.open_cv = cv_handler
+    app.cv_color = cv_color
+    app.apriltag = apriltag
+
+
+    thread = Thread(target=app.run)
+    thread.start()
+
+    while True:
+        # We control when opencv updates the image now
+        cv_handler.update()
+
+        time.sleep(0.01)
