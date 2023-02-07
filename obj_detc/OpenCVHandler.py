@@ -15,6 +15,9 @@ class OpenCVHandler:
         if success:
             self.frame = frame
 
+    def flip(self):
+        self.frame = cv2.flip(self.frame, 1)
+
     def get_frame(self, flipped=False):
 
         if flipped:
@@ -42,6 +45,12 @@ class OpenCVHandler:
 
     def add_rectangle(self, start, end, color, thickness=2):
         self.frame = cv2.rectangle(self.frame, start, end, color, thickness)
+
+    def add_line(self, start, end, color, thickness=2):
+        self.frame = cv2.line(self.frame, start, end, color, thickness)
+
+    def add_text(self, coords, text, size = 1, color = (0, 0, 255)):
+        self.frame = cv2.putText(self.frame, text, coords, cv2.FONT_HERSHEY_SIMPLEX, size, color, 2)
 
     def get_jpg_bytes(self, flipped=False):
         frame = self.get_frame(flipped)
