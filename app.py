@@ -23,49 +23,51 @@ def gen_hsv(app):  # generate frame by frame from camera
     while True:
         # Capture frame-by-frame
         app.open_cv.update()
+        frame = app.open_cv.get_frame()
 
-        height = app.open_cv.get_height()
-        width = app.open_cv.get_width()
+        height = frame.get_height()
+        width = frame.get_width()
 
         x = int(width/2)
         y = int(height/2)
 
-        hsv = app.open_cv.get_hsv()
+        hsv = frame.get_hsv()
         h, s, v = hsv[x][y]
 
         old_h = ((old_h * 99) + h) / 100
         old_s = ((old_s * 99) + s) / 100
         old_v = ((old_v * 99) + v) / 100
 
-        app.open_cv.add_line((x-50,y), (x+50, y), [255, 0, 0])
-        app.open_cv.add_line((x,y-50), (x, y+50), [255, 0, 0])
+        frame.add_line((x-50,y), (x+50, y), [255, 0, 0])
+        frame.add_line((x,y-50), (x, y+50), [255, 0, 0])
 
-        app.open_cv.flip()
+        frame.flip()
 
-        app.open_cv.add_text((10, 25), "H: %d" % old_h)
-        app.open_cv.add_text((10, 50), "S: %d" % old_s)
-        app.open_cv.add_text((10, 75), "V: %d" % old_v)
+        frame.add_text((10, 25), "H: %d" % old_h)
+        frame.add_text((10, 50), "S: %d" % old_s)
+        frame.add_text((10, 75), "V: %d" % old_v)
 
-        frame = app.open_cv.get_jpg_bytes()
+        jpg = frame.get_jpg_bytes()
         yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+               b'Content-Type: image/jpeg\r\n\r\n' + jpg + b'\r\n')  # concat frame one by one and show result
 
 def c_picker(app):  # generate frame by frame from camera
 
     while True:
         # Capture frame-by-frame
         app.open_cv.update()
+        frame = app.open_cv.get_frame()
 
-        height = app.open_cv.get_height()
-        width = app.open_cv.get_width()
+        height = frame.get_height()
+        width = frame.get_width()
 
         x = int(width/2) - 50
         y = int(height/2) - 50
 
-        app.open_cv.add_rectangle((x,y), (x+100, y+100), [255,0,0])
-        frame = app.open_cv.get_jpg_bytes(flipped=True)
+        frame.add_rectangle((x,y), (x+100, y+100), [255,0,0])
+        jpg = frame.get_jpg_bytes(flipped=True)
         yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+               b'Content-Type: image/jpeg\r\n\r\n' + jpg + b'\r\n')  # concat frame one by one and show result
 
 # This function gets called by the /video_feed route below
 def gen_frames(app):  # generate frame by frame from camera
@@ -80,10 +82,11 @@ def gen_frames(app):  # generate frame by frame from camera
 
         app.cv_color.add_rectangle()
 
-        frame = app.open_cv.get_jpg_bytes()
+        frame = app.open_cv.get_frame()
+        jpg = frame.get_jpg_bytes()
         # Return the image to the browser
         yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
+               b'Content-Type: image/jpeg\r\n\r\n' + jpg + b'\r\n')  # concat frame one by one and show result
 
 
 @app.route('/video_feed')
