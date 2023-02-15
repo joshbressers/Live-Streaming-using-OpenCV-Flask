@@ -80,6 +80,12 @@ def gen_frames(app):  # generate frame by frame from camera
 
         app.cv_color.add_rectangle()
 
+        (h, s, v) = app.cv_color.average_color
+
+        app.open_cv.add_text((10, 25), "H: %d" % h)
+        app.open_cv.add_text((10, 50), "S: %d" % s)
+        app.open_cv.add_text((10, 75), "V: %d" % v)
+
         frame = app.open_cv.get_jpg_bytes()
         # Return the image to the browser
         yield (b'--frame\r\n'
