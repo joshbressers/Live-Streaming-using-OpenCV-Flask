@@ -2,31 +2,16 @@ import cv2
 import numpy as np
 from statistics import mean
 
-class OpenCVHandler:
-    "Class to make opencv easier"
+class Frame:
+    "Class for modifying an OpenCV frame"
 
-    def __init__(self):
-        self.frame = None
+    def __init__(self, frame):
+        self.frame = frame
         self.hsv = None
         self.gray = None
-        self.camera = cv2.VideoCapture(0)
-
-    def update(self):
-        success, frame = self.camera.read()
-        if success:
-            self.frame = frame
-            self.hsv = None
-            self.gray = None
 
     def flip(self):
         self.frame = cv2.flip(self.frame, 1)
-
-    def get_frame(self, flipped=False):
-
-        if flipped:
-            return cv2.flip(self.frame, 1)
-        else:
-            return self.frame
 
     def get_hsv(self):
         if self.hsv is None:
@@ -47,6 +32,9 @@ class OpenCVHandler:
     def add_rectangle(self, start, end, color, thickness=2):
         self.frame = cv2.rectangle(self.frame, start, end, color, thickness)
 
+    def add_circle(self, center, radius, color, thickness):
+        self.frame = cv2.circle(self.frame, center, radius, color, thickness)
+
     def add_line(self, start, end, color, thickness=2):
         self.frame = cv2.line(self.frame, start, end, color, thickness)
 
@@ -54,7 +42,24 @@ class OpenCVHandler:
         self.frame = cv2.putText(self.frame, text, coords, cv2.FONT_HERSHEY_SIMPLEX, size, color, 2)
 
     def get_jpg_bytes(self, flipped=False):
-        frame = self.get_frame(flipped)
-        ret, buffer = cv2.imencode('.jpg', frame)
+        if flipped is True:
+            self.flip()
+        ret, buffer = cv2.imencode('.jpg', self.frame)
         jpg = buffer.tobytes()
         return jpg
+
+class OpenCVHandler:
+    "Class to make opencv easier"
+
+    def __init__(self):
+        self.frame = None
+        self.camera = cv2.VideoCapture(0)
+
+    def update(self):
+        success, frame = self.camera.read()
+        if success:
+            self.frame = Frame(frame)
+
+    def get_frame(self):
+        return self.frame
+

@@ -15,7 +15,9 @@ class OpenCVColor:
 
     def set(self):
 
-        hsv = self.cv.get_hsv()
+        frame = self.cv.get_frame()
+
+        hsv = frame.get_hsv()
                 # Now we want to find the high and low colors, then print them
         low = hsv[0][0]
         high = hsv[0][0]
@@ -73,15 +75,15 @@ class OpenCVColor:
         # these numbers out, it's much easier than trying to figure this
         # out by hand
 
-        hsv = self.cv.get_hsv()
         frame = self.cv.get_frame()
+        hsv = frame.get_hsv()
 
         # We now take the lower and upper bound colors and look for
         # anything that falls inside of this range.
         mask = cv2.inRange(hsv, self.lower_color, self.upper_color)
 
         # Bitwise-AND mask and original image
-        res = cv2.bitwise_and(frame,frame, mask= mask)
+        res = cv2.bitwise_and(frame.frame,frame.frame, mask= mask)
 
         # Convert the image to grayscale
         imgray = cv2.cvtColor(res,cv2.COLOR_BGR2GRAY)
@@ -97,6 +99,7 @@ class OpenCVColor:
 
     def add_rectangle(self):
 
+        frame = self.cv.get_frame()
         contours = self.get_contours()
         # This variable is going to hold the largest rectangle we find. We
         # can do multiple object tracking, but it's easier for us to track
@@ -131,5 +134,4 @@ class OpenCVColor:
         h = rectangle["h"]
 
         # We draw the rectangle onto the screen here
-        new_frame = cv2.rectangle(self.cv.get_frame(),(x,y),(x+w,y+h),[255,0,0],2)
-        self.cv.frame = new_frame
+        frame.add_rectangle((x,y),(x+w,y+h),[255,0,0],2)
