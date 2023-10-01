@@ -4,5 +4,5 @@ itsdangerous==2.0.1
 Jinja2==3.0.3
 MarkupSafe==2.0.1
 numpy==1.22.1
-opencv-python==4.5.5.62
+opencv-python==4.8.1.78.62
 Werkzeug==2.0.2
